@@ -1,4 +1,3 @@
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
@@ -22,67 +21,75 @@ class _SecondPageState extends State<SecondPage> {
     // int minute = int.parse(widget.payload) % 60;
     // String alarmSet = '$hour : $minute';
 
-    return Container(
-        decoration: const BoxDecoration(color: Colors.white),
-        width: double.infinity,
-        padding: const EdgeInsets.all(30),
-        child: Column(
-          children: [
-            Text('Alarm set ${widget.payload}'),
-            BarChart(
-              randomData(),
-              swapAnimationDuration: const Duration(milliseconds: 150), // Optional
-              swapAnimationCurve: Curves.linear, // Optional
-            )
-          ],
-        ));
-  }
-
-  BarChartData randomData() {
-    return BarChartData(
-      barTouchData: BarTouchData(
-        enabled: false,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Bar Chart'),
       ),
-      titlesData: FlTitlesData(
-        bottomTitles: AxisTitles(
-            sideTitles:
-                SideTitles(showTitles: true, getTitlesWidget: getTitles)),
-        leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-      ),
-      borderData: FlBorderData(
-        show: false,
-      ),
+      body: Container(
+          decoration: const BoxDecoration(color: Colors.white),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              Text(
+                'Alarm set ${widget.payload}',
+                style: const TextStyle(fontSize: 14, color: Colors.black),
+              ),
+              AspectRatio(
+                aspectRatio: 1.0,
+                child: Container(
+                  width: double.infinity,
+                  child: BarChart(
+                    randomData(),
+                  ),
+                ),
+              )
+            ],
+          )),
     );
   }
 
-   BarChartGroupData makeGroupData(
+  List<BarChartGroupData> showingGroups() => List.generate(7, (i) {
+        return makeGroupData(0, 5);
+      });
+
+  BarChartData randomData() {
+    return BarChartData(
+      // maxY: 60,
+      barTouchData: BarTouchData(
+        enabled: false,
+      ),
+      // titlesData: FlTitlesData(
+      //   bottomTitles: AxisTitles(
+      //       sideTitles:
+      //           SideTitles(showTitles: true, getTitlesWidget: getTitles)),
+      //   leftTitles: AxisTitles(
+      //       sideTitles:
+      //           SideTitles(showTitles: false)),
+      //   rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      //   topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      // ),
+      barGroups: showingGroups(),
+      borderData: FlBorderData(
+        show: false,
+      ),
+      gridData: FlGridData(show: true),
+    );
+  }
+
+  BarChartGroupData makeGroupData(
     int x,
     double y, {
-    bool isTouched = false,
-    Color barColor = Colors.white,
     double width = 22,
-    List<int> showTooltips = const [],
   }) {
     return BarChartGroupData(
       x: x,
       barRods: [
         BarChartRodData(
-          toY: isTouched ? y + 1 : y,
-          color: isTouched ? Colors.yellow : barColor,
+          toY: 10,
+          color: Colors.blue,
           width: width,
-          borderSide: isTouched
-              ? const BorderSide(color: Colors.yellow)
-              : const BorderSide(color: Colors.white, width: 0),
-          backDrawRodData: BackgroundBarChartRodData(
-            show: true,
-            toY: 20,
-            color: Colors.blue,
-          ),
         ),
       ],
-      showingTooltipIndicators: showTooltips,
     );
   }
 
@@ -93,7 +100,7 @@ class _SecondPageState extends State<SecondPage> {
       fontSize: 14,
     );
 
-    Widget text = const Text('M', style: style);
+    Widget text = const Text('Date', style: style);
 
     return SideTitleWidget(
       axisSide: meta.axisSide,
