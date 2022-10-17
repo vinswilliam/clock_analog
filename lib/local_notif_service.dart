@@ -5,10 +5,18 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest_all.dart' as tz;
 
 class LocalNotifService {
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  static final LocalNotifService _singleton = LocalNotifService._internal();
+
+  factory LocalNotifService() {
+    return _singleton;
+  }
+
+  LocalNotifService._internal();
 
   final BehaviorSubject<String> behaviorSubject = BehaviorSubject();
+
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   Future<void> setup() async {
     FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -46,8 +54,9 @@ class LocalNotifService {
     final String? payload = notificationResponse.payload;
     if (notificationResponse.payload != null) {
       debugPrint('notification payload: $payload');
+      final now = DateTime.now();
       if (payload != null && payload.isNotEmpty) {
-        behaviorSubject.add(payload);
+        behaviorSubject.add('$payload:${now.toString()}');
       }
     }
   }
@@ -66,15 +75,17 @@ class LocalNotifService {
       nextAlarm = duration - currentMinute;
     }
 
+    final nextSchedule = tz.TZDateTime.now(tz.local).add(Duration(minutes: nextAlarm));
+
     await flutterLocalNotificationsPlugin.zonedSchedule(
         0,
         'Alarm',
         'Kring kring kring... Time\'s up!!!',
-        tz.TZDateTime.now(tz.local).add(Duration(minutes: nextAlarm)),
+        nextSchedule,
         const NotificationDetails(
             android: AndroidNotificationDetails('Alarm', 'Alarm Analog',
                 channelDescription: 'Alarm create form Analog Clock')),
-        payload: nextAlarm.toString(),
+        payload: nextSchedule.toString(),
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime);

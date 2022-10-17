@@ -14,17 +14,12 @@ class Clock extends StatelessWidget {
     int currentMinute = now.hour * 60 + now.minute;
 
     return ChangeNotifierProvider(
-      create: (context) => ClockModel(radius: clockWidth / 2, initMinute: currentMinute),
-      child: Column(children: [
+      create: (context) =>
+          ClockModel(radius: clockWidth / 2, initMinute: currentMinute),
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              TimeWidget(),
-              SwitchWidget(),
-            ],
-          ),
+          child: const TimeWidget(),
         ),
         AspectRatio(
           aspectRatio: 1.0,
@@ -67,7 +62,8 @@ class Clock extends StatelessWidget {
               ],
             ),
           ),
-        )
+        ),
+        const SwitchWidget(),
       ]),
     );
   }
@@ -84,6 +80,7 @@ class SwitchWidget extends StatefulWidget {
 
 class _SwitchState extends State<SwitchWidget> {
   bool active = false;
+  LocalNotifService localNotifService = new LocalNotifService();
 
   Future<void> handlOnChangeSwitch(bool value) async {
     setState(() {
@@ -93,21 +90,25 @@ class _SwitchState extends State<SwitchWidget> {
     int minute = Provider.of<ClockModel>(context, listen: false).currentMinute;
 
     if (value) {
-      LocalNotifService().scheduledNotification(minute);
+      localNotifService.scheduledNotification(minute);
     } else {
-      LocalNotifService().cancelAlarm();
+      localNotifService.cancelAlarm();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
           margin: const EdgeInsets.only(left: 10),
           child: Text(
             active ? 'ON' : 'OFF',
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+            style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+                color: active ? Colors.green : Colors.black54),
           ),
         ),
         Switch(

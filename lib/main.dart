@@ -2,19 +2,21 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
 import 'package:untitled/clock_widget.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'package:untitled/second_page.dart';
 
 import 'local_notif_service.dart';
 
 Future<void> main() async {
+  LocalNotifService localNotifService = LocalNotifService();
+
   WidgetsFlutterBinding.ensureInitialized();
-  LocalNotifService().setup();
-  LocalNotifService().configureLocalTimeZone();
+  localNotifService.setup();
+  localNotifService.configureLocalTimeZone();
 
   final NotificationAppLaunchDetails? notificationAppLaunchDetails =
-      await LocalNotifService()
-          .flutterLocalNotificationsPlugin
+      await localNotifService.flutterLocalNotificationsPlugin
           .getNotificationAppLaunchDetails();
   String initialRoute = MyHomePage.routeName;
   if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
@@ -33,7 +35,9 @@ Future<void> main() async {
     routes: <String, WidgetBuilder>{
       MyHomePage.routeName: (_) => const MyHomePage(title: 'Alarm'),
       SecondPage.routeName: (_) => SecondPage(
-          payload: notificationAppLaunchDetails!.notificationResponse?.payload)
+          payload:
+              notificationAppLaunchDetails?.notificationResponse?.payload ??
+                  '0')
     },
   ));
 }
@@ -50,11 +54,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // late final LocalNotifService localNotifService;
+  LocalNotifService localNotifService = LocalNotifService();
+
   @override
   void initState() {
     super.initState();
-    // localNotifService = LocalNotifService();
     listenToNotificationStream();
   }
 
@@ -64,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void listenToNotificationStream() =>
-       LocalNotifService().behaviorSubject.listen((payload) {
+      localNotifService.behaviorSubject.listen((payload) {
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -84,27 +88,5 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
-  }
-}
-
-class SecondPage extends StatefulWidget {
-  static const String routeName = '/secondPage';
-
-  const SecondPage({Key? key, required this.payload}) : super(key: key);
-
-  final String? payload;
-
-  @override
-  _SecondPageState createState() {
-    return _SecondPageState();
-  }
-}
-
-class _SecondPageState extends State<SecondPage> {
-  @override
-  Widget build(BuildContext context) {
-    debugPrint('payload ${widget.payload}');
-
-    return Container();
   }
 }
