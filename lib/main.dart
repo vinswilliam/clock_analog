@@ -18,8 +18,8 @@ Future<void> main() async {
   final NotificationAppLaunchDetails? notificationAppLaunchDetails =
       await localNotifService.flutterLocalNotificationsPlugin
           .getNotificationAppLaunchDetails();
-  // String initialRoute = MyHomePage.routeName;
-  String initialRoute = SecondPage.routeName;
+  String initialRoute = MyHomePage.routeName;
+  // String initialRoute = SecondPage.routeName;
   if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
     // selectedNotificationPayload =
     //     notificationAppLaunchDetails!.notificationResponse?.payload;
