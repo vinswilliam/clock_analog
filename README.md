@@ -14,7 +14,9 @@ Analog Clock with alarm capabilites.
 
 ### Preview
 
-![Simulator Screen Shot - iPhone 13 - 2022-10-17 at 17 13 20](https://user-images.githubusercontent.com/2149978/196152055-f1661864-ee18-4752-a797-9caee223e7e1.png)
+<picture>
+  <img alt="user interface" src="https://user-images.githubusercontent.com/2149978/196152055-f1661864-ee18-4752-a797-9caee223e7e1.png" width='20%'>
+</picture>
 
 ### Library
 
